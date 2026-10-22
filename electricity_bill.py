@@ -1,6 +1,7 @@
 import json
 import os
-import xml.etree.ElementTree as ET
+import requests
+from defusedxml import ElementTree as ET
 
 SLABS = [(100, 3.5), (200, 5.0), (300, 6.5)]
 HIGH_RATE = 8.0
@@ -10,7 +11,7 @@ METER_XML = ("<meters>"
              "<meter id='M2' prev='5000' curr='5420'/>"
              "<meter id='M3' prev='800' curr='760'/>"
              "</meters>")
-CLERK_PASSWORD = "bill-desk-demo"
+CLERK_PASSWORD = os.environ.get("CLERK_PASSWORD")
 bills = []
 
 
@@ -59,8 +60,7 @@ def saveBills(fileName="bills.json"):
 
 
 def syncMeter(meterIp):
-    # Helper kept for the lab: not called by the demo
-    os.system("curl http://" + meterIp + "/reading")
+    return requests.get("http://" + meterIp + "/reading", timeout=5).text
 
 
 def main():
